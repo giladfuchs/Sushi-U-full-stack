@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap");
+
+.product {
+  width: 30%;
+  height: auto;
+  text-align: center;
+  background: linear-gradient(to right, #ce493798, #a5302198);
+  font-family: "Montserrat", sans-serif;
+  font-size: inherit;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.title {
+  text-transform: capitalize;
+  padding-top: 1%;
+  margin-bottom: 3%;
+  font-weight: 300;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  animation: title-animation 2s alternate 1;
+}
+
+.image {
+  margin: auto;
+  overflow: hidden;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+img {
+  transition: all 0.2s ease-in-out;
+  max-width: 100%;
+  width: 100%;
+  display: block;
+  height: auto;
+  border-radius: 5px;
+  transform: scale(1);
+  transition: all 0.3s ease-in-out;
+}
+
+img:hover {
+  transform: scale(1.12);
+}
+
+.description {
+  width: 80%;
+  margin: auto;
+  padding-top: 2%;
+  font-weight: 200;
+  animation: title-animation 2s alternate 1;
+}
+
+.buttons {
+  width: 80%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: auto;
+  padding-top: 2%;
+  padding-bottom: 3%;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 5px;
+  background: none;
+  font-size: inherit;
+  font: inherit;
+  font-weight: 200;
+  letter-spacing: 1px;
+  text-transform: capitalize;
+  transition: all 0.3s;
+}
+
+button:hover {
+  color: white;
+  border: 1px solid white;
+  transform: scale(1.1);
+}
+
+hr {
+  margin-top: -3%;
+  border: 0;
+  height: 1px;
+  width: 30%;
+  background-image: linear-gradient(
+    to right,
+    rgb(0, 0, 0),
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0)
+  );
+  animation: hr-animation 2.5s alternate 1;
+}
+
+@keyframes hr-animation {
+  from {
+    width: 0;
+  }
+  to {
+    width: 30%;
+  }
+}
+
+@keyframes title-animation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .product {
+    width: 95%;
+    height: auto;
+  }
+  .product:not(:first-of-type) {
+    margin-top: 5%;
+  }
+}

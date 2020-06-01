@@ -1,0 +1,13 @@
+.items {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-flow: row wrap;
+}
+@media (max-width: 600px) {
+  .items {
+    flex-direction: column;
+    margin: 0 auto;
+    text-align: center;
+  }
+}

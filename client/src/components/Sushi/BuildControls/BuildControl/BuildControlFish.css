@@ -1,0 +1,31 @@
+.BuildControl {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 8px 0;
+}
+
+.BuildControl button {
+  top: 5px;
+  font: inherit;
+  padding: 5px;
+  margin: 0 5px;
+  width: 80px;
+
+  border: 1px solid #dd590cdf;
+  cursor: pointer;
+  outline: none;
+}
+
+.BuildControl button:disabled {
+  background-color: #e4856e;
+  border: 1px solid #7e7365;
+  color: #ccc;
+  cursor: default;
+}
+
+.BuildControl button:hover:disabled {
+  background-color: #ac9980;
+  color: #ccc;
+  cursor: not-allowed;
+}

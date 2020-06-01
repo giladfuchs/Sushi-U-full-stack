@@ -1,0 +1,16 @@
+node_modules
+server/node_modules
+client/node_modules
+
+
+
+
+client/*.log
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+client/firebase-debug.log*
+
+client/.firebaserc
+client/.firebase/
+client/firebase
