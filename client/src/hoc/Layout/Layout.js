@@ -20,14 +20,15 @@ class Layout extends Component {
     });
   };
   render() {
+    const token = localStorage.getItem('token')
     return (
       <Aux>
         <Toolbar
           drawerToggleClicked={this.sideDrawerToggleHandler}
-          isAuth={this.props.isAuthenticated}
+          isAuth={token}
         />
         <SideDrawer
-          isAuth={this.props.isAuthenticated}
+          isAuth={token}
           open={this.state.showSideDrawer}
           closed={this.sideDrawerClosedHandler}
         />

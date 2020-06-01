@@ -5,9 +5,9 @@ module.exports = async (req, res, next) => {
   const token = req.get("token");
   error401auth(token);
 
-  let decodedToken;
   try {
-    decodedToken = jwt.verify(token, "somesupersecretsecret");
+    const decodedToken = jwt.verify(token, "somesupersecretsecret");
+
     error404(decodedToken)
 
     req.user = await User.findById(decodedToken.userId);

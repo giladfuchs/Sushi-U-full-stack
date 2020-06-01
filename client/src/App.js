@@ -38,17 +38,17 @@ class App extends Component {
         <Redirect to="/" />
       </Switch>
     );
-    // if (localStorage.getItem("token") !== null)
-    routes = (
-      <Switch>
-        <Route path="/" exact component={sushiBuilder} />
-        <Route path="/items" component={asyncItems} />
-        <Route path="/orders" exact component={asyncOrders} />
-        <Route path="/checkout" component={asyncCheckout} />
-        <Route path="/auth" component={asyncAuth} />
-        <Route path="/logout" component={Logout} />
-      </Switch>
-    );
+    if (localStorage.getItem("token") !== null)
+      routes = (
+        <Switch>
+          <Route path="/" exact component={sushiBuilder} />
+          <Route path="/items" component={asyncItems} />
+          <Route path="/orders" exact component={asyncOrders} />
+          <Route path="/checkout" component={asyncCheckout} />
+          <Route path="/auth" component={asyncAuth} />
+          <Route path="/logout" component={Logout} />
+        </Switch>
+      );
 
     return (
       <div>

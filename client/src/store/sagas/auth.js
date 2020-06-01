@@ -36,6 +36,8 @@ export function* authUserSaga(action) {
       new Date(yield new Date().getTime() + 10000000)
     );
     yield localStorage.setItem("userId", res.data.userId);
+
+
     yield put(actions.authSuccess());
     yield put(actions.checkAuthTimeout(10000000));
   } catch (error) {
