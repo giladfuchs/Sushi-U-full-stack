@@ -5,16 +5,29 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
 
-
+// 4242 4242 4242 4242
+// 10 / 22
 const app = express();
 
 app.use(morgan("dev"));
-app.use(bodyParser.json());
+
 app.use(cors());
 const indexRoutes = require("./routes/index");
 
-app.use(bodyParser.json()); // application/json
 
+var rawBodySaver = function (req, res, buf, encoding) {
+
+
+  if (buf && buf.length) {
+    req.rawBody = buf.toString(encoding || 'utf8');
+
+
+  }
+}
+
+app.use(bodyParser.json({ verify: rawBodySaver }));
+app.use(bodyParser.urlencoded({ verify: rawBodySaver, extended: true }));
+app.use(bodyParser.raw({ verify: rawBodySaver, type: '*/*' }));
 app.use("/auth", indexRoutes.auth);
 app.use("/order", indexRoutes.order);
 app.use("/cart", indexRoutes.cart);

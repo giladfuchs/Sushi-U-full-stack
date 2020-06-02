@@ -16,10 +16,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    phone: {
-      type: Number,
-      required: true,
-    },
+
     resetToken: String,
     resetTokenExpiration: Date,
     orders: [

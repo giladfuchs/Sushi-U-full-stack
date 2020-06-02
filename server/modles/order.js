@@ -28,19 +28,13 @@ const orderSchema = new Schema(
       required: true,
     },
     orderData: {
-      name: String,
-      phone: {
-        type: Number,
-        required: true,
-      },
+      remark: String,
+
       orderMethod: {
         type: String,
         required: true,
       },
-      address: {
-        type: String,
-        default: "",
-      },
+
     },
   },
   { timestamps: true }

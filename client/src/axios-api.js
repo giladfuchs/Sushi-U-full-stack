@@ -6,8 +6,6 @@ const instance = axios.create({
   headers: {
     "Access-Control-Allow-Origin": true,
     "Access-Control-Allow-Headers": " ",
-    // token: "" + localStorage.getItem("token"),
-
   },
 });
 instance.interceptors.request.use(

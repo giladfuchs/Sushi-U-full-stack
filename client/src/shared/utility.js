@@ -1,4 +1,5 @@
-export const updatedObject = (oldObject, updatedProperties) => {
+
+export const updateObject = (oldObject, updatedProperties) => {
   return {
     ...oldObject,
     ...updatedProperties
@@ -34,4 +35,24 @@ export const checkValidity = (value, rules) => {
   }
 
   return isValid;
+};
+
+export const inputChanged = (form, event, inputIdentifier) => {
+  const updatedFormElement = updateObject(form[inputIdentifier], {
+    value: event.target.value,
+    valid: checkValidity(event.target.value, form[inputIdentifier].validation),
+    touched: true,
+  });
+  const updatedForm = updateObject(form, {
+    [inputIdentifier]: updatedFormElement,
+  });
+
+
+  const formIsValid = Object.keys(updatedForm).every(e =>
+    updatedForm[e].valid
+
+  );
+
+
+  return { updatedForm, formIsValid };
 };

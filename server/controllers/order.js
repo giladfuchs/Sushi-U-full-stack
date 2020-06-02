@@ -1,5 +1,8 @@
 
 const Item = require("../modles/item");
+const User = require("../modles/user");
+
+const Stripe = require('stripe');
 
 const Order = require("../modles/order");
 const { error404, error422 } = require('../middleware/error-handler')
@@ -19,33 +22,109 @@ exports.getOrders = async (req, res, next) => {
   }
 };
 
-exports.postOrder = async (req, res, next) => {
+exports.payment = async (req, res, next) => {
+
+
+  const stripe = Stripe(process.env.STRIPE);
+
+  let event;
+  // const rawBody = { ...req.body.rawBody };
+
+
+
   try {
+    event = stripe.webhooks.constructEvent(
+      req.rawBody, req.get('stripe-signature'),
+      'whsec_ubOcGGGzyu0cccWDpoM8BeotE1rN0Ocu'
+    );
+  } catch (error) {
+    console.log(error.message);
+
+    return res.status(400).send(`Webhook Error: ${error.message}`);
+  }
 
 
-    let items = await req.user.populate("cart.items.productId").execPopulate();
-    items = items.cart.items.filter((i) => {
-      return i.productId !== null;
-    });
-    if (items === null) items = [];
-    items = items.map((i) => {
-      return { quantity: i.quantity, product: { ...i.productId._doc } };
-    });
+  if (event.type === 'payment_intent.succeeded') {
+    const session = event.data.object;
 
-    const order = new Order({
-      orderData: req.body,
-      cart: {
-        items: items,
-        sushi: req.user.cart.sushi,
-        price: req.user.cart.price,
+
+    try {
+
+      console.log("userId", session.description);
+
+      req.user = await User.findById(session.description)
+      console.log(req.user);
+
+      let items = await req.user.populate("cart.items.productId").execPopulate();
+      items = items.cart.items.filter((i) => {
+        return i.productId !== null;
+      });
+      if (items === null) items = [];
+      items = items.map((i) => {
+        return { quantity: i.quantity, product: { ...i.productId._doc } };
+      });
+
+
+      const order = new Order({
+        orderData: { orderMethod: "take away", remark: "aa" },
+        cart: {
+          items: items,
+          sushi: req.user.cart.sushi,
+          price: req.user.cart.price,
+        },
+        userId: req.user._id,
+      });
+
+      await req.user.clear(order);
+      res.status(200).send({ received: true });
+    } catch (error) {
+      console.log(error);
+
+      res.status(404).send({ error, session });
+    }
+  }
+
+};
+
+// const urlStripe = "http://localhost:3000/"
+const urlStripe = "https://sushiu.firebaseapp.com/"
+const CURRENCY = 'eur';
+
+const toCent = amount => amount * 100;
+exports.postOrder = async (req, res, next) => {
+  const stripe = Stripe(process.env.STRIPE);
+
+
+
+
+  const lineItem = {
+    name: req.user.name,
+    amount: toCent(33),
+    currency: CURRENCY,
+    quantity: 1,
+    // orderData: { ...req.body },
+  };
+
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      client_reference_id: "clientReferenceId",
+      customer_email: req.user.email,
+      payment_method_types: ['card'],
+      line_items: [lineItem],
+      payment_intent_data: {
+        description: req.user._id.toString(),
+
       },
-      userId: req.user._id,
+      success_url: urlStripe,
+      cancel_url: urlStripe,
     });
+    console.log("im here");
 
 
-    await req.user.clear(order);
 
-    res.status(201).json(order);
+
+    res.status(201).json({ session });
   } catch (err) {
     console.log(err);
 

@@ -1,5 +1,7 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import scriptLoader from 'react-async-script-loader';
+
 
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
@@ -7,146 +9,104 @@ import classes from "./ContactData.css";
 import axios from "../../../axios-api";
 import Input from "../../../components/UI/Input/Input";
 import axiosMessageHandler from "../../../hoc/axiosMessageHandler/axiosMessageHandler";
+import { inputChanged } from "../../../shared/utility";
+import { name, orderMethod } from '../../../shared/form.input'
 
 import * as actions from "../../../store/actions/index";
-import { checkValidity } from "../../../shared/utility";
-class ContactData extends Component {
-  state = {
-    orderForm: {
-      name: {
-        elementType: "input",
-        elementConfig: {
-          type: "text",
-          placeholder: "Your Name",
-        },
-        value: "",
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
+const ContactData = (props) => {
+
+  const [stripe, setStripe] = React.useState(null);
+
+  React.useEffect(() => {
+    console.log(props.isScriptLoaded, props.isScriptLoadSucceed);
+
+    if (props.isScriptLoaded && props.isScriptLoadSucceed) {
+      setStripe(window.Stripe('pk_test_0vhbUGgLB4Lt9JojLBgMvJIv00uaF8SW90'));
+    }
+  }, [props.isScriptLoaded, props.isScriptLoadSucceed]);
+
+  const [orderForm, setOrderForm] = useState({
+    orderMethod,
+    remark: {
+      ...name,
+      elementConfig: {
+        type: "text",
+        placeholder: "Remark",
       },
-      phone: {
-        elementType: "input",
-        elementConfig: {
-          type: "number",
-          placeholder: 0,
-        },
-        value: "",
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
-      },
-      address: {
-        elementType: "input",
-        elementConfig: {
-          type: "text",
-          placeholder: "Address",
-        },
-        value: "",
-        validation: {
-          required: true,
-        },
-        valid: false,
-        touched: false,
+      validation: {
+        required: false,
       },
 
-      orderMethod: {
-        elementType: "select",
-        elementConfig: {
-          options: [
-            { value: "take", displayValue: "Take Away" },
-            { value: "delivery", displayValue: "Delivery" },
-          ],
-        },
-        value: "take",
-        validation: {},
-        valid: true,
-      },
     },
-    formIsValid: false,
-  };
+  });
 
-  orderHandler = (event) => {
+
+  const [formIsValid, setFormIsValid] = useState(false)
+
+
+  const orderHandler = (event) => {
     event.preventDefault();
 
-    const formData = {};
-    for (let formElementIdentifier in this.state.orderForm) {
-      formData[formElementIdentifier] = this.state.orderForm[
-        formElementIdentifier
-      ].value;
-    }
-    const order = {
-      orderData: formData,
-      cart: this.props.cart,
-    };
-    console.log(order);
+    const formData = Object.assign(
+      {},
+      ...Object.keys(orderForm).map((k) => ({ [k]: orderForm[k].value }))
+    );
 
-    this.props.onOrdersushi(formData);
+
+
+    props.onOrdersushi(formData, stripe);
   };
 
-  inputChangedHandler = (event, inputIdentifier) => {
-    const updatedOrderForm = {
-      ...this.state.orderForm,
-    };
-    const updatedFormElement = {
-      ...updatedOrderForm[inputIdentifier],
-    };
-    updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = checkValidity(
-      updatedFormElement.value,
-      updatedFormElement.validation
-    );
-    updatedFormElement.touched = true;
-    updatedOrderForm[inputIdentifier] = updatedFormElement;
+  const inputChangedHandler = (event, inputIdentifier) => {
 
-    let formIsValid = true;
-    for (let inputIdentifier in updatedOrderForm) {
-      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
-    }
-    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
+    const ans = inputChanged(orderForm, event, inputIdentifier);
+
+    setOrderForm(ans.updatedForm);
+    setFormIsValid(ans.formIsValid);
+
+
   };
 
-  render() {
-    const formElementsArray = [];
-    for (let key in this.state.orderForm) {
-      formElementsArray.push({
-        id: key,
-        config: this.state.orderForm[key],
-      });
-    }
-    let form = (
-      <form onSubmit={this.orderHandler}>
-        {formElementsArray.map((formElement) => (
-          <Input
-            key={formElement.id}
-            elementType={formElement.config.elementType}
-            elementConfig={formElement.config.elementConfig}
-            value={formElement.config.value}
-            invalid={!formElement.config.valid}
-            shouldValidate={formElement.config.validation}
-            touched={formElement.config.touched}
-            changed={(event) => this.inputChangedHandler(event, formElement.id)}
-          />
-        ))}
-        <Button btnType="Success" disabled={this.state.formIsValid}>
-          ORDER
-        </Button>
-      </form>
-    );
-    if (this.props.loading) {
-      form = <Spinner />;
-    }
-    return (
-      <div className={classes.ContactData}>
-        <h4>Enter your Contact Data</h4>
 
-        {form}
-      </div>
-    );
+  const formElementsArray = [];
+  for (let key in orderForm) {
+    formElementsArray.push({
+      id: key,
+      config: orderForm[key],
+    });
   }
+  let form = (
+    <form onSubmit={orderHandler}>
+      {formElementsArray.map((formElement) => (
+        <Input
+          key={formElement.id}
+          elementType={formElement.config.elementType}
+          elementConfig={formElement.config.elementConfig}
+          value={formElement.config.value}
+          invalid={!formElement.config.valid}
+          shouldValidate={formElement.config.validation}
+          touched={formElement.config.touched}
+          changed={(event) => inputChangedHandler(event, formElement.id)}
+        />
+      ))}
+      <Button btnType="Success" disabled={!formIsValid}>
+        ORDER
+        </Button>
+    </form>
+  );
+  if (props.loading) {
+    form = <Spinner />;
+  }
+  return (
+    <div className={classes.ContactData}>
+      <h4>Enter additional data</h4>
+
+      {form}
+
+
+    </div>
+  );
+
 }
 
 const mapStateToProps = (state) => {
@@ -162,11 +122,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onOrdersushi: (orderData) => dispatch(actions.purchasesushi(orderData)),
+    onOrdersushi: (orderData, stripe) => dispatch(actions.purchasesushi(orderData, stripe)),
   };
 };
-
-export default connect(
+export default scriptLoader('https://js.stripe.com/v3/')(connect(
   mapStateToProps,
   mapDispatchToProps
-)(axiosMessageHandler(ContactData, axios));
+)(axiosMessageHandler(ContactData, axios)));

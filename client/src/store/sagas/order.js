@@ -8,10 +8,17 @@ export function* purchasesushi(action) {
     console.log(action.orderData);
 
     yield put(actions.purchasesushiStart());
-    yield axios.post("/order/order", action.orderData);
+    const session = yield axios.post("/order/order", action.orderData);
+    const stripe = action.stripe;
+    console.log(session);
 
+    const result = yield stripe.redirectToCheckout({
+      sessionId: session.data.session.id,
+    });
     yield put(actions.purchasesushiSuccess());
   } catch (error) {
+    console.log(error);
+
     yield put(actions.purchasesushiFail());
   }
 }

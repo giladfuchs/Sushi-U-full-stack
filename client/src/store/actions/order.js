@@ -17,10 +17,10 @@ export const purchasesushiStart = () => {
     type: actionTypes.PURCHASE_SUSHI_START,
   };
 };
-export const purchasesushi = (orderData) => {
+export const purchasesushi = (orderData, stripe) => {
   return {
     type: actionTypes.PURCHASE_SUSHI,
-
+    stripe: stripe,
     orderData: orderData,
   };
 };
