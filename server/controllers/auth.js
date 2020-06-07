@@ -20,8 +20,10 @@ exports.signup = async (req, res, next) => {
     });
 
     await user.save();
+    const token = createToken(user);
+    console.log(token);
 
-    res.status(201).json({ message: "create new user", userId: user._id });
+    res.status(201).json({ message: "create new user", userId: user._id, token });
   } catch (err) {
     return next(err);
   }

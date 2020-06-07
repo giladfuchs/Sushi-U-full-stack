@@ -29,7 +29,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(localStorage.getItem("token"));
+
     let routes = (
       <Switch>
         <Route path="/" exact component={sushiBuilder} />

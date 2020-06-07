@@ -14,22 +14,25 @@ class Orders extends Component {
   render() {
 
 
+    const orders = this.props.data[0] ? Object.keys(this.props.data).map((order) => {
+      return (
+        <div key={order}>
+          <p> {"Date "}{this.props.data[order].createdAt.split('T')[0]}{" methood "}
+            {this.props.data[order].orderData.orderMethod}{" builder "}
+            {this.props.data[order].cart.sushi.length}{" items "}
+            {this.props.data[order].cart.items.length}{" price "}
+            {this.props.data[order].cart.price}{" "}
+
+          </p>
+        </div>
+      );
+    }) : <p>you still don't have order</p>;
+
     const show = this.props.loading ? (
       <Spinner />
-    ) : (
-        Object.keys(this.props.data).map((order) => {
-          return (
-            <div key={order}>
-              <p> {"Date "}{this.props.data[order].createdAt.split('T')[0]}{" methood "}
-                {this.props.data[order].orderData.orderMethod}{" builder "}
-                {this.props.data[order].cart.sushi.length}{" items "}
-                {this.props.data[order].cart.items.length}{" price "}
-                {this.props.data[order].cart.price}{" "}
-
-              </p>
-            </div>
-          );
-        })
+    ) : (<div>
+      {orders}
+    </div>
       );
 
     return <div>{show}</div>;

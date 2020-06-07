@@ -101,7 +101,7 @@ class Auth extends Component {
         </Button>
         <h4>{errorMessage}</h4>
         <p> user for test also the password is the e-mail</p>
-        <p> aq@gmail.com </p>
+        <p> sushi@sushi.com </p>
       </div>
     );
   }
