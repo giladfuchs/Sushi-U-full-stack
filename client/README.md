@@ -1,1 +1,1 @@
-https://sushi-uu.firebaseapp.com/
+https://sushiu.firebaseapp.com/
